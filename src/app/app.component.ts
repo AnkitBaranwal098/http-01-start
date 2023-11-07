@@ -37,10 +37,10 @@ export class AppComponent implements OnInit {
     this.http.get('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json')
     .pipe(
       map(responseData => {
-        console.log("Hello -> ",responseData)
+        
         const postsArray = [];
         for (const key in responseData) {
-          console.log("Key", key)
+         
           if (responseData.hasOwnProperty(key)) {
             postsArray.push({ ...responseData[key], id: key });
           }
@@ -49,7 +49,9 @@ export class AppComponent implements OnInit {
       })
     )
     .subscribe((posts)=>{
-      console.log(posts)
+      // console.log(posts)
+      this.loadedPosts = posts;
+
     })
   }
 }
