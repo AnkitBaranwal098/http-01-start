@@ -2,6 +2,8 @@ import { Component, OnInit } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { map } from 'rxjs/operators';
 
+import {PostServicesService} from './post-services.service'
+
 @Component({
   selector: 'app-root',
   templateUrl: './app.component.html',
@@ -10,50 +12,58 @@ import { map } from 'rxjs/operators';
 export class AppComponent implements OnInit {
   loadedPosts = [];
 
-  constructor(private http: HttpClient) { }
+  constructor(private postServices:PostServicesService) { }
 
   ngOnInit() { 
-    this.fetchPosts();
+    // this.fetchPosts();
+    this.postServices.fetchAllPosts().subscribe(postsArr=>{
+      this.loadedPosts = postsArr
+    })
   }
 
   onCreatePost(postData: { title: string; content: string }) {
     // Send Http request
     // console.log(postData);
-    this.http.post('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json', postData).subscribe((responseData) => {
-      console.log(responseData)
-    })
+    // this.http.post('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json', postData).subscribe((responseData) => {
+    //   console.log(responseData)
+    // })
+
+    this.postServices.createAndSendPost(postData.title, postData.content)
   }
 
   onFetchPosts() {
     // Send Http request
-    this.fetchPosts()
+    // this.fetchPosts()
+    this.postServices.fetchAllPosts().subscribe(postsArr=>{
+      this.loadedPosts = postsArr
+    })
   }
 
   onClearPosts() {
     // Send Http request
   }
 
-  private fetchPosts(){
-    this.http.get('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json')
-    .pipe(
-      map(responseData => {
+  // private fetchPosts(){
+  //   this.http.get('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json')
+  //   .pipe(
+  //     map(responseData => {
         
-        const postsArray = [];
-        for (const key in responseData) {
+  //       const postsArray = [];
+  //       for (const key in responseData) {
          
-          if (responseData.hasOwnProperty(key)) {
-            postsArray.push({ ...responseData[key], id: key });
-          }
-        }
-        return postsArray;
-      })
-    )
-    .subscribe((posts)=>{
-      // console.log(posts)
-      this.loadedPosts = posts;
+  //         if (responseData.hasOwnProperty(key)) {
+  //           postsArray.push({ ...responseData[key], id: key });
+  //         }
+  //       }
+  //       return postsArray;
+  //     })
+  //   )
+  //   .subscribe((posts)=>{
+  //     // console.log(posts)
+  //     this.loadedPosts = posts;
 
-    })
-  }
+  //   })
+  // }
 }
 
 // Now we can starting sending request to our backend server.For that we just need to inject our HttpClient this we import from '@angular/common/http'
