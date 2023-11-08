@@ -12,7 +12,7 @@ import {PostServicesService} from './post-services.service'
 export class AppComponent implements OnInit {
   loadedPosts = [];
 
-  constructor(private postServices:PostServicesService) { }
+  constructor(private http: HttpClient, private postServices:PostServicesService) { }
 
   ngOnInit() { 
     // this.fetchPosts();
@@ -36,11 +36,19 @@ export class AppComponent implements OnInit {
     // this.fetchPosts()
     this.postServices.fetchAllPosts().subscribe(postsArr=>{
       this.loadedPosts = postsArr
+    },
+    // Handling errors for http requests Approach 1
+    err=>{
+      console.log(err.message)
     })
   }
 
   onClearPosts() {
     // Send Http request
+    this.http.delete('https://ng-complete-guide-b5e4c-default-rtdb.firebaseio.com/posts.json').subscribe(()=>{
+      
+      this.loadedPosts.length = 0
+    })
   }
 
   // private fetchPosts(){
